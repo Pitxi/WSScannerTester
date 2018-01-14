@@ -1,0 +1,29 @@
+mat-toolbar-row .title {
+  margin: 0 auto;
+}
+
+.content, .footer {
+  padding: 1rem;
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &:not(:last-child) {
+      margin-bottom: 2rem;
+    }
+
+    mat-form-field {
+      width: 100%;
+    }
+
+  :not(:last-child) {
+      margin-right: 1rem;
+    }
+  }
+}
+
+.scan-button {
+  width: 100%;
+}

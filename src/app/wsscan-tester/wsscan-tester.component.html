@@ -1,0 +1,65 @@
+<div class="mat-elevation-z2">
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <span class="title mat-headline">WebSocket Scanner Server Tester</span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="content" [formGroup]="configFG">
+    <div class="row">
+      <!-- Dialog Title -->
+      <mat-form-field>
+        <input matInput placeholder="Título del diálogo" formControlName="dialogTitle">
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <!-- Image Format -->
+      <mat-form-field>
+        <mat-select formControlName="format" placeholder="Formato de imagen">
+          <mat-option *ngFor="let item of Format | keys" [value]="item.value">{{ item.key }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- PPI -->
+      <mat-form-field>
+        <mat-select formControlName="ppi" placeholder="Puntos Por Pulgada">
+          <mat-option *ngFor="let ppi of AVAILABLE_PPI" [value]="ppi">{{ ppi }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
+      <!-- Paper Size -->
+      <mat-form-field>
+        <mat-select formControlName="paperSize" placeholder="Tipo de papel">
+          <mat-option *ngFor="let item of PaperSize | keys" [value]="item.value">{{ item.key }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Intent -->
+      <mat-form-field>
+        <mat-select formControlName="intent" placeholder="Tipo de imagen">
+          <mat-option *ngFor="let item of Intent | keys" [value]="item.value">{{ item.key }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <div>
+        <mat-slide-toggle formControlName="ppiSelectable">Selector de PPI</mat-slide-toggle>
+      </div>
+
+      <div>
+        <mat-slide-toggle formControlName="paperSelectable">Selector de tipo de papel</mat-slide-toggle>
+      </div>
+
+      <div>
+        <mat-slide-toggle formControlName="intentSelectable">Selector de tipo de imagen</mat-slide-toggle>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="scan-button" mat-raised-button color="primary" (click)="scan()" [disabled]="configFG.invalid">Escanear</button>
+  </div>
+</div>
