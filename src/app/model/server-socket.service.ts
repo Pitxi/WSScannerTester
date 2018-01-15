@@ -15,7 +15,7 @@ export class ServerSocketService {
    */
   public connect(): void {
     if (!this.messages) {
-      this.messages = websocketConnect('ws://localhost:8001/WSScanService', this.inputStream = new QueueingSubject<string>()).messages.share();
+      this.messages = websocketConnect('ws://localhost:8001/WSScanService', this.inputStream = new QueueingSubject<string>()).messages;
     }
   }
 

@@ -60,6 +60,6 @@
   </div>
 
   <div class="footer">
-    <button class="scan-button" mat-raised-button color="primary" (click)="scan()" [disabled]="configFG.invalid">Escanear</button>
+    <button class="scan-button" mat-raised-button color="primary" (click)="scan()" [disabled]="configFG.invalid || launched">Escanear</button>
   </div>
 </div>

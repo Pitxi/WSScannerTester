@@ -1,0 +1,13 @@
+:host:hover {
+  background-color: rgba(0, 0, 255, 0.1);
+}
+
+:host {
+  transition: background-color linear 0.5s;
+}
+
+.image-gallery-item-container {
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+}

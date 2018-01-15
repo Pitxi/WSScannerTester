@@ -5,6 +5,7 @@ import {ServerSocketService} from "../model/server-socket.service";
 import {Subscription} from "rxjs/Subscription";
 import "rxjs/add/operator/retryWhen";
 import "rxjs/add/operator/delay";
+import {ImagesService} from "../model/images.service";
 
 /**
  * Tester for WebSocket Scan Server.
@@ -12,8 +13,7 @@ import "rxjs/add/operator/delay";
 @Component({
   selector: 'wsscan-tester',
   templateUrl: './wsscan-tester.component.html',
-  styleUrls: ['./wsscan-tester.component.scss'],
-  providers: [ ServerSocketService ]
+  styleUrls: ['./wsscan-tester.component.scss']
 })
 export class WsscanTesterComponent implements OnInit, OnDestroy {
   private socketSubscription: Subscription;
@@ -22,12 +22,14 @@ export class WsscanTesterComponent implements OnInit, OnDestroy {
   readonly Intent = Intent;
   readonly PaperSize = PaperSize;
   readonly AVAILABLE_PPI = AVAILABLE_PPI;
+  launched: boolean;
 
   /**
    * Constructor.
    */
-  constructor(private socket: ServerSocketService) {
+  constructor(private socket: ServerSocketService, private images: ImagesService) {
     let fb = new FormBuilder();
+    this.launched = false;
 
     this.configFG = fb.group({
       dialogTitle     : [ 'Escaneando documentos', Validators.required ],
@@ -58,6 +60,7 @@ export class WsscanTesterComponent implements OnInit, OnDestroy {
     };
 
     this.socket.send(command);
+    this.launched = true;
   }
 
   /**
@@ -66,8 +69,22 @@ export class WsscanTesterComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.socket.connect();
 
-    this.socketSubscription = this.socket.messages.retryWhen(errors => errors.delay(1000)).subscribe(response => {
-      console.log(response);
+    this.socketSubscription = this.socket.messages.retryWhen(errors => errors.delay(1000)).subscribe((response: string) => {
+      let images = [];
+
+      if (response.startsWith('[')) {
+        images = JSON.parse(response).map(image => {
+          let prefix: string = 'data:{mimetype};base64,'.replace(/\{mimetype\}/, this.configFG.get('format').value);
+
+          return prefix + image;
+        });
+
+        this.images.imageList.next(images);
+      } else if (response.startsWith('{')) {
+        throw JSON.parse(response);
+      }
+
+      this.launched = false;
     });
   }
 

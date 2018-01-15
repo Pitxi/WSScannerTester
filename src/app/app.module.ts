@@ -10,13 +10,19 @@ import {
 } from "@angular/material";
 import { KeysPipe } from './keys.pipe';
 import {ReactiveFormsModule} from "@angular/forms";
+import {ImagesService} from "./model/images.service";
+import {ServerSocketService} from "./model/server-socket.service";
+import { ImageGalleryComponent } from './image-gallery/image-gallery.component';
+import { ImageGalleryItemComponent } from './image-gallery/image-gallery-item/image-gallery-item.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     WsscanTesterComponent,
-    KeysPipe
+    KeysPipe,
+    ImageGalleryComponent,
+    ImageGalleryItemComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +34,7 @@ import {ReactiveFormsModule} from "@angular/forms";
     MatToolbarModule,
     MatSlideToggleModule
   ],
-  providers: [],
+  providers: [ ServerSocketService, ImagesService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

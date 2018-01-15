@@ -1,3 +1,8 @@
 <div id="main-container">
-  <wsscan-tester></wsscan-tester>
+  <wsscan-tester *ngIf="!hasImages"></wsscan-tester>
+
+  <div class="images" *ngIf="hasImages">
+    <image-gallery item-size="200px"></image-gallery>
+    <button class="back-button" mat-button color="primary" (click)="images.clear()">Atrás</button>
+  </div>
 </div>

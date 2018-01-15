@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {ImagesService} from "./model/images.service";
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,18 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'app';
+  hasImages: boolean;
+
+  /**
+   * Constructor.
+   *
+   * @param {ImagesService} images
+   */
+  constructor(private images: ImagesService) {
+    this.hasImages = false;
+
+    this.images.imageList.subscribe((images) => {
+      this.hasImages = images.length > 0;
+    });
+  }
 }
