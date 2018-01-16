@@ -24,6 +24,17 @@ mat-toolbar-row .title {
   }
 }
 
+.warning-message {
+  text-align: center;
+  color: rgb(180, 0, 0);
+  background-color: rgba(255, 0, 0, 0.1);
+  padding: 1rem;
+
+  span {
+    font-size: 1rem;
+  }
+}
+
 .scan-button {
   width: 100%;
 }

@@ -1,5 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
+import {MatDialog} from "@angular/material";
+import {LargeImageDialogComponent} from "./large-image-dialog/large-image-dialog.component";
 
 @Component({
   selector: 'image-gallery-item',
@@ -14,7 +16,18 @@ export class ImageGalleryItemComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustUrl(this._imageUrl);
   }
 
-  constructor(private sanitizer: DomSanitizer) {}
+  /**
+   * Constructor.
+   *
+   * @param {DomSanitizer} sanitizer Saneador de cadenas para las URLs de las imágenes.
+   */
+  constructor(private sanitizer: DomSanitizer, private dialog: MatDialog) {}
+
+  showLargeImage(): void {
+    let dialogRef = this.dialog.open(LargeImageDialogComponent, {
+      data: { url: this.url }
+    });
+  }
 
   ngOnInit() {}
 }

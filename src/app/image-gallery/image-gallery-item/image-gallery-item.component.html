@@ -1,3 +1,5 @@
-<div class="image-gallery-item-container">
-  <img [src]="url" [ngStyle]="{ width: 'auto', 'max-height': height }">
+<div class="image-gallery-item-container" (click)="showLargeImage()">
+  <div class="image">
+    <img [src]="url" [ngStyle]="{ 'max-height': height }">
+  </div>
 </div>

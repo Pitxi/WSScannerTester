@@ -6,6 +6,7 @@ import {Subscription} from "rxjs/Subscription";
 import "rxjs/add/operator/retryWhen";
 import "rxjs/add/operator/delay";
 import {ImagesService} from "../model/images.service";
+import "rxjs/add/operator/share";
 
 /**
  * Tester for WebSocket Scan Server.
@@ -23,6 +24,14 @@ export class WsscanTesterComponent implements OnInit, OnDestroy {
   readonly PaperSize = PaperSize;
   readonly AVAILABLE_PPI = AVAILABLE_PPI;
   launched: boolean;
+
+  /**
+   * Gets the number of active WebSocket connections established with the web scan server.
+   * @returns {number} Number of active connections.
+   */
+  get activeConnections(): number {
+    return this.socket.activeConnections;
+  }
 
   /**
    * Constructor.
@@ -69,7 +78,7 @@ export class WsscanTesterComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.socket.connect();
 
-    this.socketSubscription = this.socket.messages.retryWhen(errors => errors.delay(1000)).subscribe((response: string) => {
+    this.socketSubscription = this.socket.connection.messages.share().retryWhen(errors => errors.delay(1000)).share().subscribe((response: string) => {
       let images = [];
 
       if (response.startsWith('[')) {

@@ -3,11 +3,27 @@
 }
 
 :host {
-  transition: background-color linear 0.5s;
+  transition: background-color ease 0.5s;
 }
 
 .image-gallery-item-container {
   display: flex;
   flex-direction: column;
   padding: 4px;
+  cursor: pointer;
+
+  .image {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    min-width: 100px;
+    min-height: 100px;
+
+    img {
+      display: block;
+      width: auto;
+      object-fit: contain;
+    }
+  }
 }
