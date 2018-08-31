@@ -1,5 +1,5 @@
 <div id="main-container">
-  <wsscan-tester *ngIf="!hasImages"></wsscan-tester>
+  <wsscan-tester [hidden]="hasImages"></wsscan-tester>
 
   <div class="images" *ngIf="hasImages">
     <image-gallery item-size="200px"></image-gallery>

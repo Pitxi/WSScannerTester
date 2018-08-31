@@ -1,33 +1,48 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {QueueingSubject} from "queueing-subject";
 import websocketConnect, {Connection} from 'rxjs-websockets';
-import {ScanCommand} from "./wsscan-command-model";
+import {Subscription} from "rxjs";
+import { IScanCommand } from "./wsscan-command-model";
 
 @Injectable()
 export class ServerSocketService {
+  public connection: Connection = null;
+  public connectionSubscription: Subscription;
+  public activeConnections: number = 0;
+  public wsScanUrl = 'ws://localhost:8001/WSScanService';
   private inputStream: QueueingSubject<string>;
-  public  connection: Connection;
-  public  activeConnections: number;
-  public readonly WSScanUrl = 'ws://localhost:8001/WSScanService';
+
+  constructor() {
+  }
 
   /**
    * Connects to the WebSocket server, initializing the messages Observable.
    */
   public connect(): void {
-    if (!this.connection) {
-      this.connection = websocketConnect(this.WSScanUrl, this.inputStream = new QueueingSubject<string>());
-      this.connection.connectionStatus.subscribe(connections => { this.activeConnections = connections; });
+    this.disconnect();
+
+    this.connection = websocketConnect(this.wsScanUrl, this.inputStream = new QueueingSubject<string>());
+    this.connectionSubscription = this.connection.connectionStatus.subscribe(connections => {
+      this.activeConnections = connections;
+    });
+  }
+
+  public disconnect(): void {
+    if (!!this.connectionSubscription) {
+      this.connectionSubscription.unsubscribe();
     }
+
+    this.connection = null;
+    this.connectionSubscription = null;
+    this.activeConnections = 0;
   }
 
   /**
-   * Sends the scan command to the server.
+   * Sends the showScanDialog command to the server.
    *
-   * @param {ScanCommand} command Scan command with it's parameters.
+   * @param command Scan command with it's parameters.
    */
-  public send(command: ScanCommand): void {
+  public send(command: IScanCommand): void {
     this.inputStream.next(JSON.stringify(command));
   }
-
-  constructor() {}
 }

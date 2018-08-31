@@ -6,11 +6,25 @@
   </mat-toolbar>
 
   <div class="content">
-    <div class="warning-message" *ngIf="activeConnections == 0">
-      <span class="mat-body">Intentando connectar al servidor de escaneo en '{{ socket.WSScanUrl }}'<br>Asegúrese de que el servidor está ejecutándose.</span>
+    <div class="row">
+      <mat-form-field>
+        <input matInput placeholder="Introduzca la URL del servidor" [(ngModel)]="serverUrl" [disabled]="activeConnections > 0">
+      </mat-form-field>
+
+      <div style="display: flex; flex-direction: column; align-self: center">
+        <button mat-raised-button color="primary" [disabled]="!serverUrl || activeConnections > 0" (click)="connect()">Connectar</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-self: center">
+        <button mat-raised-button color="warn" [disabled]="activeConnections == 0" (click)="disconnect()">Desconnectar</button>
+      </div>
     </div>
 
-    <div [formGroup]="configFG" *ngIf="activeConnections > 0">
+    <div class="warning-message" *ngIf="isConnecting">
+      <span class="mat-body">Intentando connectar al servidor de escaneo en '{{ socket.wsScanUrl }}'<br>Asegúrese de que el servidor está ejecutándose.</span>
+    </div>
+
+    <div [formGroup]="scanConfigFG" *ngIf="activeConnections > 0">
       <div class="row">
         <!-- Dialog Title -->
         <mat-form-field>
@@ -41,10 +55,12 @@
           </mat-select>
         </mat-form-field>
 
-        <!-- Intent -->
+        <!-- WiaImageIntent -->
         <mat-form-field>
           <mat-select formControlName="intent" placeholder="Tipo de imagen">
-            <mat-option *ngFor="let item of Intent | keys" [value]="item.value">{{ item.key }}</mat-option>
+            <ng-container *ngFor="let item of Intent | keys">
+              <mat-option [value]="item.value" *ngIf="item.key != 'Unspecified'">{{ item.key }}</mat-option>
+            </ng-container>
           </mat-select>
         </mat-form-field>
       </div>
@@ -64,7 +80,8 @@
       </div>
 
       <div class="footer">
-        <button class="scan-button" mat-raised-button color="primary" (click)="scan()" [disabled]="configFG.invalid || launched">Escanear</button>
+        <button class="expanded-width" mat-raised-button color="primary" (click)="showScanDialog()" [disabled]="scanConfigFG.invalid || launched">Mostrar diálogo de escaneo</button>
+        <button class="expanded-width" mat-raised-button color="primary" (click)="scan(0)" [disabled]="scanConfigFG.invalid || launched">Escanear</button>
       </div>
     </div>
   </div>

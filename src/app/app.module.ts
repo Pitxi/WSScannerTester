@@ -13,7 +13,7 @@ import {
   MatToolbarModule
 } from "@angular/material";
 import {KeysPipe} from './keys.pipe';
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ImagesService} from "./model/images.service";
 import {ServerSocketService} from "./model/server-socket.service";
 import {ImageGalleryComponent} from './image-gallery/image-gallery.component';
@@ -32,6 +32,7 @@ import {LargeImageDialogComponent} from './image-gallery/image-gallery-item/larg
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    FormsModule,
     ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,

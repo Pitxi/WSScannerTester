@@ -13,7 +13,7 @@ Por el momento el único comando admitido es **scan**, que muestra el diálogo d
 Ejemplo de objeto JSON para el comando scan:
 ```json
 {
-  "command"         : "scan",
+  "command"         : showScanDialog,
   "format"          : "tiff",
   "dialogTitle"     : "Título del diálogo",
   "ppi"             : 200,
@@ -49,3 +49,10 @@ Ejemplo de objeto JSON para el comando scan:
 * **`paperSelectable [boolean]`**: Si el usuario puede o no usar la caja de selección para el tipo de papel. El valor por defecto es `true`.
 * **`intentSelectable [boolean]`**: Si el usuario puede o no usar la caja de selección para el tipo de imagen. El valor por defecto es `true`.
 
+## Notas acerca de Microsoft Edge:
+* Asegúrese de que Microsoft Edge esté configurado para permitir conexiones loopback con localhost.
+* Asegúrese de que en las opciones de internet, en la pestaña de seguridad, zona de intranet local, apartado Sites se encuentra marcada la opción de detección automática de intranet.
+* Asegúrese de añadir una excepción de acceso al loopback para Microsoft Edge mediante el siguiente comando:
+	``` PowerShell
+	CheckNetIsolation LoopbackExempt -a -n="Microsoft.MicrosoftEdge_8wekyb3d8bbwe"
+	```

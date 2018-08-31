@@ -1,0 +1,63 @@
+/**
+ * WIA Page size values.
+ */
+export enum Page {
+  A4           = 0,     /// 8267 x 11692
+  Letter       = 1,     /// 8500 x 11000
+  Custom       = 2,     /// Current extent settings
+  USLegal      = 3,     /// 8500 x 14000
+  USLetter     = 1,     /// 8500 x 11000
+  USLedger     = 4,     /// 11000 x 17000
+  USStatement  = 5,     /// 5500 x 8500
+  BusinessCard = 6,     /// 3543 x 2165
+  ISO_A0       = 7,     /// 33110 x 46811
+  ISO_A1       = 8,     /// 23385 x 33110
+  ISO_A2       = 9,     /// 16535 x 23385
+  ISO_A3       = 10,    /// 11692 x 16535
+  ISO_A4       = 0,     /// 8267 x 11692
+  ISO_A5       = 11,    /// 5826 x 8267
+  ISO_A6       = 12,    /// 4133 x 5826
+  ISO_A7       = 13,    /// 2913 x 4133
+  ISO_A8       = 14,    /// 2047 x 2913
+  ISO_A9       = 15,    /// 1456 x 2047
+  ISO_A10      = 16,    /// 1023 x 1456
+  ISO_B0       = 17,    /// 39370 x 55669
+  ISO_B1       = 18,    /// 27834 x 39370
+  ISO_B2       = 19,    /// 19685 x 27834
+  ISO_B3       = 20,    /// 13897 x 19685
+  ISO_B4       = 21,    /// 9842 x 13897
+  ISO_B5       = 22,    /// 6929 x 9842
+  ISO_B6       = 23,    /// 4921 x 6929
+  ISO_B7       = 24,    /// 3464 x 4921
+  ISO_B8       = 25,    /// 2440 x 3464
+  ISO_B9       = 26,    /// 1732 x 2440
+  ISO_B10      = 27,    /// 1220 x 1732
+  ISO_C0       = 28,    /// 36102 x 51062
+  ISO_C1       = 29,    /// 25511 x 36102
+  ISO_C2       = 30,    /// 18031 x 25511
+  ISO_C3       = 31,    /// 12755 x 18031
+  ISO_C4       = 32,    /// 9015 x 12755 (unfolded)
+  ISO_C5       = 33,    /// 6377 x 9015 (folded once)
+  ISO_C6       = 34,    /// 4488 x 6377 (folded twice)
+  ISO_C7       = 35,    /// 3188 x 4488
+  ISO_C8       = 36,    /// 2244 x 3188
+  ISO_C9       = 37,    /// 1574 x 2244
+  ISO_C10      = 38,    /// 1102 x 1574
+  JIS_B0       = 39,    /// 40551 x 57322
+  JIS_B1       = 40,    /// 28661 x 40551
+  JIS_B2       = 41,    /// 20275 x 28661
+  JIS_B3       = 42,    /// 14330 x 20275
+  JIS_B4       = 43,    /// 10118 x 14330
+  JIS_B5       = 44,    /// 7165 x 10118
+  JIS_B6       = 45,    /// 5039 x 7165
+  JIS_B7       = 46,    /// 3582 x 5039
+  JIS_B8       = 47,    /// 2519 x 3582
+  JIS_B9       = 48,    /// 1771 x 2519
+  JIS_B10      = 49,    /// 1259 x 1771
+  JIS_2A       = 50,    /// 46811 x 66220
+  JIS_4A       = 51,    /// 66220 x 93622
+  DIN_2B       = 52,    /// 55669 x 78740
+  DIN_4B       = 53,    /// 78740 x 111338
+  Auto         = 100,   /// Driver automatically detects page size.
+  CustomBase   = 0x8000 /// Page size already known to driver and application.
+}

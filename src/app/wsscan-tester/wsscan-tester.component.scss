@@ -24,6 +24,10 @@ mat-toolbar-row .title {
   }
 }
 
+.footer button:not(:last-child) {
+  margin-bottom: 1rem;
+}
+
 .warning-message {
   text-align: center;
   color: rgb(180, 0, 0);
@@ -35,6 +39,6 @@ mat-toolbar-row .title {
   }
 }
 
-.scan-button {
+.expanded-width {
   width: 100%;
 }
