@@ -144,6 +144,9 @@ export class WsscanTesterComponent implements OnDestroy {
 
           images.push(`data:${this.getImageMimeType()};base64,${response.data}`);
           this.images.imageList.next(images);
+          break;
+        case 'error':
+          console.error(response);
       }
 
       this.launched = false;

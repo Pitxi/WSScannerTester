@@ -5,7 +5,7 @@ import { ImageFormat } from "./image-format.enum";
 import { Page } from "./page.enum";
 import { ImageIntent } from "./image-intent.enum";
 
-export const AVAILABLE_PPI  = [ 100, 200, 300, 600, 1200 ];
+export const AVAILABLE_PPI = [ 100, 200, 300, 600, 1200 ];
 
 /**
  * Interface for all scanner commands.
@@ -18,7 +18,7 @@ export interface IScannerCommand {
 /**
  * Interface for scan commands.
  */
-export interface IScanCommand extends IScannerCommand{
+export interface IScanCommand extends IScannerCommand {
   command: 'scan-dialog' | 'scan';
   parameters: IScannerConfig
 }
@@ -27,13 +27,13 @@ export interface IScanCommand extends IScannerCommand{
  * Interface for scanner configuration parameters.
  */
 export interface IScannerConfig {
-  format?          : ImageFormat;
-  dialogTitle?     : string;
-  ppi?             : number;
-  paper?           : Page;
-  intent?          : ImageIntent;
-  ppiSelectable?   : boolean;
-  paperSelectable? : boolean;
+  format?: ImageFormat;
+  dialogTitle?: string;
+  ppi?: number;
+  paper?: Page;
+  intent?: ImageIntent;
+  ppiSelectable?: boolean;
+  paperSelectable?: boolean;
   intentSelectable?: boolean;
-  selectedDevice?  : number;
+  selectedDevice?: number;
 }
