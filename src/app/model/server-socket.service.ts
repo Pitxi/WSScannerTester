@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {QueueingSubject} from "queueing-subject";
-import websocketConnect, {Connection} from 'rxjs-websockets';
-import {Subscription} from "rxjs";
-import { IScanCommand } from "./wsscan-command-model";
+import { Injectable } from '@angular/core';
+import { QueueingSubject } from "queueing-subject";
+import websocketConnect, { Connection } from 'rxjs-websockets';
+import { Subscription } from "rxjs";
+import { IScannerCommand } from "./iscanner-command";
 
 @Injectable()
 export class ServerSocketService {
@@ -42,7 +42,7 @@ export class ServerSocketService {
    *
    * @param command Scan command with it's parameters.
    */
-  public send(command: IScanCommand): void {
+  public send(command: IScannerCommand): void {
     this.inputStream.next(JSON.stringify(command));
   }
 }

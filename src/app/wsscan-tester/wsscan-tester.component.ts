@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { AVAILABLE_PPI, IScanCommand } from "../model/wsscan-command-model";
+import { AVAILABLE_PPI } from "../model/wsscan-command-model";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ServerSocketService } from "../model/server-socket.service";
 import { Subscription } from "rxjs/Subscription";
@@ -11,6 +11,11 @@ import { ImageIntent } from "../model/image-intent.enum";
 import { ImageFormat } from "../model/image-format.enum";
 import { Page } from "../model/page.enum";
 import { IResponse } from "../model/iresponse";
+import { IScannerCommand } from "../model/iscanner-command";
+import { IDevice } from "../model/idevice";
+import { IDocumentSource } from "../model/idocument-source";
+import { DocumentHandlingCapabilities } from "../model/document-handling-capabilities.enum";
+import { DocumentHandlingSelect } from "../model/document-handling-select.enum";
 
 /**
  * Tester for WebSocket Scan Server.
@@ -18,9 +23,11 @@ import { IResponse } from "../model/iresponse";
 @Component({
   selector: 'wsscan-tester',
   templateUrl: './wsscan-tester.component.html',
-  styleUrls: ['./wsscan-tester.component.scss']
+  styleUrls: [ './wsscan-tester.component.scss' ]
 })
 export class WsscanTesterComponent implements OnDestroy {
+  private _devices: Array<IDevice>;
+  private _documentSources: Array<IDocumentSource>;
   private socketSubscription: Subscription;
   readonly scanConfigFG: FormGroup;
   readonly Format = ImageFormat;
@@ -28,6 +35,14 @@ export class WsscanTesterComponent implements OnDestroy {
   readonly PaperSize = Page;
   readonly AVAILABLE_PPI = AVAILABLE_PPI;
   launched: boolean;
+
+  public get devices(): Array<IDevice> {
+    return this._devices;
+  }
+
+  public get documentSources(): Array<IDocumentSource> {
+    return this._documentSources;
+  }
 
   public get serverUrl(): string {
     return this.socket.wsScanUrl;
@@ -55,16 +70,20 @@ export class WsscanTesterComponent implements OnDestroy {
   constructor(private socket: ServerSocketService, private images: ImagesService) {
     let fb = new FormBuilder();
     this.launched = false;
+    this._devices = [];
+    this._documentSources = [];
 
     this.scanConfigFG = fb.group({
-      dialogTitle: ['Escaneando documentos', Validators.required],
-      format: [ImageFormat.PNG, Validators.required],
-      ppi: [200, Validators.required],
-      paperSize: [Page.Letter, Validators.required],
-      intent: [ImageIntent.Color, Validators.required],
-      ppiSelectable: [true, Validators.required],
-      paperSelectable: [true, Validators.required],
-      intentSelectable: [true, Validators.required]
+      selectedDevice: [ null, Validators.required ],
+      documentSource: [ null, Validators.required ],
+      dialogTitle: [ 'Escaneando documentos', Validators.required ],
+      format: [ ImageFormat.PNG, Validators.required ],
+      ppi: [ 200, Validators.required ],
+      paperSize: [ Page.Letter, Validators.required ],
+      intent: [ ImageIntent.Color, Validators.required ],
+      ppiSelectable: [ true, Validators.required ],
+      paperSelectable: [ true, Validators.required ],
+      intentSelectable: [ true, Validators.required ]
     });
   }
 
@@ -72,7 +91,7 @@ export class WsscanTesterComponent implements OnDestroy {
    * Sends the Scan command to the server.
    */
   showScanDialog(): void {
-    const command: IScanCommand = {
+    const command: IScannerCommand = {
       command: 'scan-dialog',
       parameters: {
         format: this.scanConfigFG.get('format').value,
@@ -90,8 +109,8 @@ export class WsscanTesterComponent implements OnDestroy {
     this.launched = true;
   }
 
-  scan(deviceIndex: number): void {
-    const command: IScanCommand = {
+  scan(): void {
+    const command: IScannerCommand = {
       command: 'scan',
       parameters: {
         format: this.scanConfigFG.get('format').value,
@@ -102,9 +121,12 @@ export class WsscanTesterComponent implements OnDestroy {
         ppiSelectable: this.scanConfigFG.get('ppiSelectable').value,
         paperSelectable: this.scanConfigFG.get('paperSelectable').value,
         intentSelectable: this.scanConfigFG.get('intentSelectable').value,
-        selectedDevice: deviceIndex
+        selectedDevice: this.scanConfigFG.get('selectedDevice').value,
+        documentSource: this.scanConfigFG.get('documentSource').value
       }
     };
+
+    console.log(command);
 
     this.images.imageList.next([]);
     this.socket.send(command);
@@ -134,7 +156,7 @@ export class WsscanTesterComponent implements OnDestroy {
 
     this.socketSubscription = this.socket.connection.messages.share().retryWhen(errors => errors.delay(5000)).share().subscribe((responseStr: string) => {
       const response: IResponse = JSON.parse(responseStr);
-      
+
       switch (response.type) {
         case 'message':
           console.log(response.data);
@@ -145,12 +167,54 @@ export class WsscanTesterComponent implements OnDestroy {
           images.push(`data:${this.getImageMimeType()};base64,${response.data}`);
           this.images.imageList.next(images);
           break;
+        case 'devices-list':
+          this._devices = response.data;
+
+          if (this._devices.length > 0) {
+            const deviceId = this._devices[ 0 ].id;
+
+            this.scanConfigFG.get('selectedDevice').setValue(deviceId);
+            this.selectedDeviceChanged(deviceId);
+          }
+
+          break;
         case 'error':
           console.error(response);
       }
 
       this.launched = false;
     });
+
+    this.refreshDevices();
+  }
+
+  selectedDeviceChanged(deviceId: string): void {
+    const device = this._devices.find(device => device.id == deviceId);
+
+    this._documentSources = [];
+
+    if (device.capabilities & DocumentHandlingCapabilities.Feeder) {
+      this._documentSources.push({ description: 'Alimentador', value: DocumentHandlingSelect.Feeder });
+    }
+
+    if (device.capabilities & DocumentHandlingCapabilities.Duplex) {
+      this._documentSources.push({
+        description: 'Alimentador doble cara',
+        value: DocumentHandlingSelect.Feeder | DocumentHandlingSelect.Duplex
+      });
+    }
+
+    if (device.capabilities & DocumentHandlingCapabilities.Flatbed) {
+      this._documentSources.push({ description: 'Bandeja', value: DocumentHandlingSelect.Flatbed })
+    }
+
+    if (this._documentSources.length > 0) {
+      this.scanConfigFG.get('documentSource').setValue(this._documentSources[ 0 ].value);
+    }
+  }
+
+  refreshDevices() {
+    this.socket.send({ command: 'list-devices' });
   }
 
   disconnect(): void {
@@ -158,6 +222,9 @@ export class WsscanTesterComponent implements OnDestroy {
       this.socketSubscription.unsubscribe();
     }
 
+    this._devices = [];
+    this._documentSources = [];
+    this.launched = false;
     this.socket.disconnect();
   }
 

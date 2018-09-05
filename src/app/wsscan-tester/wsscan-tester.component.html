@@ -26,6 +26,37 @@
 
     <div [formGroup]="scanConfigFG" *ngIf="activeConnections > 0">
       <div class="row">
+        <!-- Device selector-->
+        <mat-form-field>
+          <mat-select
+            placeholder="Select a scanner device"
+            formControlName="selectedDevice"
+            (change)="selectedDeviceChanged($event.value)">
+            <mat-option *ngFor="let device of devices" [value]="device.id">
+              {{ device.description }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Refresh button -->
+        <button
+          mat-icon-button
+          matTooltip="Refrescar la lista de dispositivos."
+          matTooltipShowDelay="500"
+          color="primary"
+          (click)="refreshDevices()">
+          <mat-icon svgIcon="refresh"></mat-icon>
+        </button>
+
+        <!-- Document handling selector -->
+        <mat-form-field>
+          <mat-select placeholder="Select a scanner device" formControlName="documentSource">
+            <mat-option *ngFor="let source of documentSources" [value]="source.value">{{ source.description }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="row">
         <!-- Dialog Title -->
         <mat-form-field>
           <input matInput placeholder="Título del diálogo" formControlName="dialogTitle">
@@ -81,7 +112,7 @@
 
       <div class="footer">
         <button class="expanded-width" mat-raised-button color="primary" (click)="showScanDialog()" [disabled]="scanConfigFG.invalid || launched">Mostrar diálogo de escaneo</button>
-        <button class="expanded-width" mat-raised-button color="primary" (click)="scan(0)" [disabled]="scanConfigFG.invalid || launched">Escanear</button>
+        <button class="expanded-width" mat-raised-button color="primary" (click)="scan()" [disabled]="scanConfigFG.invalid || launched">Escanear</button>
       </div>
     </div>
   </div>
