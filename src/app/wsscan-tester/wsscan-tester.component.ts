@@ -118,9 +118,6 @@ export class WsscanTesterComponent implements OnDestroy {
         ppi: this.scanConfigFG.get('ppi').value,
         paper: this.scanConfigFG.get('paperSize').value,
         intent: this.scanConfigFG.get('intent').value,
-        ppiSelectable: this.scanConfigFG.get('ppiSelectable').value,
-        paperSelectable: this.scanConfigFG.get('paperSelectable').value,
-        intentSelectable: this.scanConfigFG.get('intentSelectable').value,
         selectedDevice: this.scanConfigFG.get('selectedDevice').value,
         documentSource: this.scanConfigFG.get('documentSource').value
       }

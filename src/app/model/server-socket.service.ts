@@ -38,7 +38,7 @@ export class ServerSocketService {
   }
 
   /**
-   * Sends the showScanDialog command to the server.
+   * Sends a command to the server.
    *
    * @param command Scan command with it's parameters.
    */
