@@ -36,30 +36,48 @@ export class WsscanTesterComponent implements OnDestroy {
   readonly AVAILABLE_PPI = AVAILABLE_PPI;
   launched: boolean;
 
+  /**
+   * gets a list of available devices.
+   */
   public get devices(): Array<IDevice> {
     return this._devices;
   }
 
+  /**
+   * Gets a list of available document sources in the device.
+   */
   public get documentSources(): Array<IDocumentSource> {
     return this._documentSources;
   }
 
+  /**
+   * Gets the URL of the websocket scanner server.
+   */
   public get serverUrl(): string {
     return this.socket.wsScanUrl;
   }
 
+  /**
+   * Sets the URL of the websocket scanner server.
+   *
+   * @param url
+   */
   public set serverUrl(url: string) {
     this.socket.wsScanUrl = url;
   }
 
   /**
    * Gets the number of active WebSocket connections established with the web showScanDialog server.
+   *
    * @returns {number} Number of active connections.
    */
   get activeConnections(): number {
     return this.socket.activeConnections;
   }
 
+  /**
+   * Gets if the application is actually trying to connect to the scanner server.
+   */
   get isConnecting(): boolean {
     return !!this.socket.connection && this.socket.activeConnections == 0;
   }
@@ -88,7 +106,7 @@ export class WsscanTesterComponent implements OnDestroy {
   }
 
   /**
-   * Sends the Scan command to the server.
+   * Sends the command to show the scanning dialog in the host machine.
    */
   showScanDialog(): void {
     const command: IScannerCommand = {
@@ -109,6 +127,9 @@ export class WsscanTesterComponent implements OnDestroy {
     this.launched = true;
   }
 
+  /**
+   * Send the command to initiate the scanning process.
+   */
   scan(): void {
     const command: IScannerCommand = {
       command: 'scan',
@@ -130,6 +151,9 @@ export class WsscanTesterComponent implements OnDestroy {
     this.launched = true;
   }
 
+  /**
+   * Gets the mime type corresponding to the selected image format.
+   */
   private getImageMimeType(): string {
     const format: ImageFormat = this.scanConfigFG.get('format').value;
 
@@ -147,6 +171,9 @@ export class WsscanTesterComponent implements OnDestroy {
     }
   }
 
+  /**
+   * Connects to the scanner server and sets the subscription to the connection on success.
+   */
   connect(): void {
     this.disconnect();
     this.socket.connect();
@@ -185,6 +212,11 @@ export class WsscanTesterComponent implements OnDestroy {
     this.refreshDevices();
   }
 
+  /**
+   * Refreshes the list of available document sources from the given device.
+   *
+   * @param deviceId The ID of the device whose document sources are requested.
+   */
   selectedDeviceChanged(deviceId: string): void {
     const device = this._devices.find(device => device.id == deviceId);
 
@@ -210,10 +242,17 @@ export class WsscanTesterComponent implements OnDestroy {
     }
   }
 
+  /**
+   * Gets the list of available devices from the server.
+   */
   refreshDevices() {
     this.socket.send({ command: 'list-devices' });
   }
 
+
+  /**
+   * Disconnects from the server.
+   */
   disconnect(): void {
     if (!!this.socketSubscription) {
       this.socketSubscription.unsubscribe();
@@ -226,7 +265,7 @@ export class WsscanTesterComponent implements OnDestroy {
   }
 
   /**
-   * Frees unnecessary resources on destroy.
+   * Releases resources when the component is destroyed.
    */
   ngOnDestroy() {
     this.disconnect();
