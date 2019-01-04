@@ -1,119 +1,144 @@
 <div class="mat-elevation-z2">
-  <mat-toolbar color="primary">
-    <mat-toolbar-row>
-      <span class="title mat-headline">WebSocket Scanner Server Tester</span>
-    </mat-toolbar-row>
-  </mat-toolbar>
+    <mat-toolbar color="primary">
+        <mat-toolbar-row>
+            <span class="title mat-headline">WebSocket Scanner Server Tester</span>
+        </mat-toolbar-row>
+    </mat-toolbar>
 
-  <div class="content">
-    <div class="row">
-      <mat-form-field>
-        <input matInput placeholder="Introduzca la URL del servidor" [(ngModel)]="serverUrl" [disabled]="activeConnections > 0">
-      </mat-form-field>
+    <div class="content" [formGroup]="scanConfigFG">
+        <div class="row">
+            <mat-form-field>
+                <input matInput
+                       placeholder="Introduzca la URL del servidor"
+                       formControlName="serverUrl">
+            </mat-form-field>
 
-      <div style="display: flex; flex-direction: column; align-self: center">
-        <button mat-raised-button color="primary" [disabled]="!serverUrl || activeConnections > 0" (click)="connect()">Connectar</button>
-      </div>
+            <mat-form-field>
+                <mat-select placeholder="Select a server type"
+                            formControlName="serverType">
+                    <mat-option value="manager">Manager</mat-option>
+                    <mat-option value="service">Service</mat-option>
+                </mat-select>
+            </mat-form-field>
 
-      <div style="display: flex; flex-direction: column; align-self: center">
-        <button mat-raised-button color="warn" [disabled]="activeConnections == 0" (click)="disconnect()">Desconnectar</button>
-      </div>
-    </div>
+            <div style="display: flex; flex-direction: column; align-self: center">
+                <button mat-raised-button color="primary" [disabled]="!serverUrl || activeConnections > 0"
+                        (click)="connect()">Connectar
+                </button>
+            </div>
 
-    <div class="warning-message" *ngIf="isConnecting">
-      <span class="mat-body">Intentando connectar al servidor de escaneo en '{{ socket.wsScanUrl }}'<br>Asegúrese de que el servidor está ejecutándose.</span>
-    </div>
-
-    <div [formGroup]="scanConfigFG" *ngIf="activeConnections > 0">
-      <div class="row">
-        <!-- Device selector-->
-        <mat-form-field>
-          <mat-select
-            placeholder="Select a scanner device"
-            formControlName="selectedDevice"
-            (change)="selectedDeviceChanged($event.value)">
-            <mat-option *ngFor="let device of devices" [value]="device.id">
-              {{ device.description }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <!-- Refresh button -->
-        <button
-          mat-icon-button
-          matTooltip="Refrescar la lista de dispositivos."
-          matTooltipShowDelay="500"
-          color="primary"
-          (click)="refreshDevices()">
-          <mat-icon svgIcon="refresh"></mat-icon>
-        </button>
-
-        <!-- Document handling selector -->
-        <mat-form-field>
-          <mat-select placeholder="Select a scanner device" formControlName="documentSource">
-            <mat-option *ngFor="let source of documentSources" [value]="source.value">{{ source.description }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <div class="row">
-        <!-- Dialog Title -->
-        <mat-form-field>
-          <input matInput placeholder="Título del diálogo" formControlName="dialogTitle">
-        </mat-form-field>
-      </div>
-
-      <div class="row">
-        <!-- Image Format -->
-        <mat-form-field>
-          <mat-select formControlName="format" placeholder="Formato de imagen">
-            <mat-option *ngFor="let item of Format | keys" [value]="item.value">{{ item.key }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <!-- PPI -->
-        <mat-form-field>
-          <mat-select formControlName="ppi" placeholder="Puntos Por Pulgada">
-            <mat-option *ngFor="let ppi of AVAILABLE_PPI" [value]="ppi">{{ ppi }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-
-        <!-- Paper Size -->
-        <mat-form-field>
-          <mat-select formControlName="paperSize" placeholder="Tipo de papel">
-            <mat-option *ngFor="let item of PaperSize | keys" [value]="item.value">{{ item.key }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <!-- WiaImageIntent -->
-        <mat-form-field>
-          <mat-select formControlName="intent" placeholder="Tipo de imagen">
-            <ng-container *ngFor="let item of Intent | keys">
-              <mat-option [value]="item.value" *ngIf="item.key != 'Unspecified'">{{ item.key }}</mat-option>
-            </ng-container>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <div class="row">
-        <div>
-          <mat-slide-toggle formControlName="ppiSelectable">Selector de PPI</mat-slide-toggle>
+            <div style="display: flex; flex-direction: column; align-self: center">
+                <button mat-raised-button color="warn" [disabled]="activeConnections == 0" (click)="disconnect()">
+                    Desconnectar
+                </button>
+            </div>
         </div>
 
-        <div>
-          <mat-slide-toggle formControlName="paperSelectable">Selector de tipo de papel</mat-slide-toggle>
+        <div class="warning-message" *ngIf="isConnecting">
+            <span class="mat-body">Intentando connectar al servidor de escaneo en '{{ socket.wsScanUrl }}'<br>Asegúrese de que el servidor está ejecutándose.</span>
         </div>
 
-        <div>
-          <mat-slide-toggle formControlName="intentSelectable">Selector de tipo de imagen</mat-slide-toggle>
-        </div>
-      </div>
+        <div *ngIf="activeConnections > 0">
+            <div class="row" *ngIf="serverType == 'service'">
+                <!-- Device selector-->
+                <mat-form-field>
+                    <mat-select
+                            placeholder="Seleccione un dispositivo de escaneo"
+                            formControlName="selectedDevice"
+                            (change)="selectedDeviceChanged($event.value)">
+                        <mat-option *ngFor="let device of devices" [value]="device.id">
+                            {{ device.description }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
 
-      <div class="footer">
-        <button class="expanded-width" mat-raised-button color="primary" (click)="showScanDialog()" [disabled]="scanConfigFG.invalid || launched">Mostrar diálogo de escaneo</button>
-        <button class="expanded-width" mat-raised-button color="primary" (click)="scan()" [disabled]="scanConfigFG.invalid || launched">Escanear</button>
-      </div>
+                <!-- Refresh button -->
+                <button
+                        mat-icon-button
+                        matTooltip="Refrescar la lista de dispositivos."
+                        matTooltipShowDelay="500"
+                        color="primary"
+                        (click)="refreshDevices()">
+                    <mat-icon svgIcon="refresh"></mat-icon>
+                </button>
+
+                <!-- Document handling selector -->
+                <mat-form-field>
+                    <mat-select placeholder="Seleccione el origen de los documentos" formControlName="documentSource">
+                        <mat-option *ngFor="let source of documentSources"
+                                    [value]="source.value">{{ source.description }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="row">
+                <!-- Dialog Title -->
+                <mat-form-field>
+                    <input matInput placeholder="Título del diálogo" formControlName="dialogTitle">
+                </mat-form-field>
+            </div>
+
+            <div class="row">
+                <!-- Image Format -->
+                <mat-form-field>
+                    <mat-select formControlName="format" placeholder="Formato de imagen">
+                        <mat-option *ngFor="let item of Format | keys" [value]="item.value">{{ item.key }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- PPI -->
+                <mat-form-field>
+                    <mat-select formControlName="ppi" placeholder="Puntos Por Pulgada">
+                        <mat-option *ngFor="let ppi of AVAILABLE_PPI" [value]="ppi">{{ ppi }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+
+                <!-- Paper Size -->
+                <mat-form-field>
+                    <mat-select formControlName="paperSize" placeholder="Tipo de papel">
+                        <mat-option *ngFor="let item of PaperSize | keys"
+                                    [value]="item.value">{{ item.key }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- WiaImageIntent -->
+                <mat-form-field>
+                    <mat-select formControlName="intent" placeholder="Tipo de imagen">
+                        <ng-container *ngFor="let item of Intent | keys">
+                            <mat-option [value]="item.value"
+                                        *ngIf="item.key != 'Unspecified'">{{ item.key }}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="row">
+                <div>
+                    <mat-slide-toggle formControlName="ppiSelectable">Selector de PPI</mat-slide-toggle>
+                </div>
+
+                <div>
+                    <mat-slide-toggle formControlName="paperSelectable">Selector de tipo de papel</mat-slide-toggle>
+                </div>
+
+                <div>
+                    <mat-slide-toggle formControlName="intentSelectable">Selector de tipo de imagen</mat-slide-toggle>
+                </div>
+            </div>
+
+            <div class="footer">
+                <!-- Show scan dialog -->
+                <button class="expanded-width" mat-raised-button color="primary" (click)="showScanDialog()"
+                        [disabled]="serverType != 'manager' || scanConfigFG.invalid || launched">Mostrar diálogo de
+                    escaneo
+                </button>
+
+                <!-- Scan documents -->
+                <button class="expanded-width" mat-raised-button color="primary" (click)="scan()"
+                        [disabled]="serverType != 'service' || scanConfigFG.invalid || launched">Escanear
+                </button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
